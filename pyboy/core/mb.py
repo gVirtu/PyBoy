@@ -783,12 +783,15 @@ class HDMA:
                 for i in range(bytes_to_transfer):
                     mb.setitem((dst + i) & 0xFFFF, mb.getitem((src + i) & 0xFFFF))
 
-                # Number of blocks of 16-bytes transfered. Set 7th bit for "completed".
-                self.hdma5 = 0xFF  # (value & 0x7F) | 0x80 #0xFF
-                self.hdma4 = 0xFF
-                self.hdma3 = 0xFF
-                self.hdma2 = 0xFF
-                self.hdma1 = 0xFF
+                final_src = (src + bytes_to_transfer) & 0xFFFF
+                final_dst = (dst + bytes_to_transfer) & 0xFFFF
+
+                self.hdma1 = (final_src >> 8) & 0xFF
+                self.hdma2 = final_src & 0xF0
+                self.hdma3 = (final_dst >> 8) & 0x1F
+                self.hdma4 = final_dst & 0xF0
+                self.hdma5 = 0xFF   # signals transfer complete (readable via FF55)
+
                 # TODO: Progress cpu cycles!
                 # https://gist.github.com/drhelius/3394856
                 # cpu is halted during dma transfer

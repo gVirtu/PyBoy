@@ -187,6 +187,7 @@ class LCD:
                 self.clock_target += 80
                 self.next_stat_mode = 3
                 interrupt_flag |= self._STAT.update_LYC(self.LYC, self.LY)
+                self.renderer.wy_activated_frame = (self.WY == self.LY)
 
             elif self._LCDC.lcd_enable:
                 # Change to next mode
